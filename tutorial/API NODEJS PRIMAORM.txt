@@ -1,0 +1,94 @@
+ESTRUTURA INICIAL DO PROJETO
+
+Talvez começar pelo README para definir os requisitos da API?
+
+npm init -y para ser criado o package.json
+
+pasta src / server.ts  e app.ts
+
+npm i typescript @types/node tsx tsup -D          tsx transforma nosso código em javascript para o node conseguir entender e rodar    tsup faz o nosso build de typescript para javascript mais tarde
+
+npx tsc --init    para criar nosso tsconfig.json
+
+npm i fastify
+
+Em app.ts 
+import fastify from "fastify";
+
+export const app = fastify()
+
+
+Em server.ts
+import { app } from "./app";
+
+app.listen({ host: "0.0.0.0", port: 3333 }).then(() => {
+  console.log("Application listening on port 3333");
+});
+
+Criar .gitignore com node_modules e build
+
+scripts "dev": "tsx watch src/server.ts"   "build": "tsup src --out-dir build"  "start": "node build/server.js"
+
+Adicionar o arquivo .npmrc com o texto save-exact=true
+Essa configuração vai sempre que uma lib for instalada colocar a versão exata no package.json e nao > ou ~ ^
+isso serve para quando o projeto estiver no ar e precisarmos atualizar as dependëncias do nosso projeto e quando se está
+a versão exata do projeto existem alguns bots como o renovate do github que eventualmente tenta aumentar uma das versões do seu projeto
+e rodar os testes automatizados. Se der tudo certo ele cria um PR dizendo que aquele pacote pode ser atualizado e isso automatiza a necessidade de
+atualização de dependências nos projetos. Muito lesgal! Naum guostei, asmei!
+
+
+
+
+
+VARIAVEIS DE AMBIENTE
+
+.env .env.example na raiz com NODE_ENV=dev
+
+instalar a lib dotenv para conseguir acessar as variáveis de ambiente com process.env
+
+criar uma pasta env com index.ts para podermos validas nossas variaveis e exportamos
+
+Instalar zod 
+
+
+
+
+
+ORM - OBJECT RELATIONAL MAPPER - Mapear as tabelas em estruturas dentro do código de representação destas tabelas (Primas, TypeORM, Sequelize são alguns exemplos)
+Primas faz migrations de forma automatizada, tem integração com typescript entre outras coisas
+
+
+instalar a lib de interfacer de comando npm i prisma -D
+npx prima init
+
+Instalar a extensão Prisma no vs code
+
+Em settings.json add a opção "[prisma]":{"editor.formatOnSave": true},
+
+
+
+Instalar agora sim a dependencia de produção que é o @prisma/client
+
+
+
+
+
+CONFIGURANDO O DB POSTGRES NO DOCKER E RODANDO MIGRATIONS
+docker-compose.yml
+
+LEMBRAR quando demos prisma init uma variável databaseURL foi criada no .env por padrão. Atualizar lá.
+
+docker compose up -d  (-d dettach para não ficar mostrando log)
+
+npx prisma generate  gera o client do prisma com tudo o que definimos em schema.prisma para obtermos por exemplo um intellisense das tabelas e propriedades que elas possuem enquanto codamos!
+
+npx prisma migrate dev para rodar as migrations
+
+npx prisma studio para abrir interface de database
+
+
+
+
+
+
+

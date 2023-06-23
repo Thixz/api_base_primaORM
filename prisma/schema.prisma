@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid()) // Com o @ estamos acessando configs para a coluna
+  name          String
+  email         String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+
+  checkIns CheckIn[]
+
+  @@map("users") // Com o @@ estamos acessando configs da tabela em si. Aqui no caso estamos dizendo que o nome da tabela sera users
+}
+
+model CheckIn {
+  id           String    @id @default(uuid())
+  created_at   DateTime  @default(now())
+  validated_at DateTime?
+
+  user    User   @relation(fields: [user_id], references: [id]) // Quando digito nome da relação Model e salvo o prisma já cria uma relação
+  user_id String
+
+  gym    Gym    @relation(fields: [gym_id], references: [id])
+  gym_id String
+
+  @@map("check_ins")
+}
+
+model Gym {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+  phone       String?
+  latitude    Decimal
+  longitude   Decimal
+
+  checkIns CheckIn[]
+
+  @@map("gyms")
+}
+
+// // Relacionamento de tabela
+// // Relação de tabela 1 para 1:
+// // Uma relação de tabela 1 para 1 ocorre quando cada registro em uma tabela está associado a no máximo um registro em outra tabela, e vice-versa. 
+// Essa relação é expressa através do uso de chaves primárias e chaves estrangeiras. Por exemplo, suponha que você tenha uma tabela de "Clientes" e outra tabela de "Pedidos". 
+// Cada cliente pode fazer no máximo um pedido, e cada pedido está associado a apenas um cliente. Portanto, essa é uma relação 1 para 1.
+
+// // Relação de tabela 1 para qualquer (1 para any):
+// // Uma relação de tabela 1 para qualquer ocorre quando cada registro em uma tabela está associado a um ou mais registros em outra tabela, mas cada registro na segunda tabela 
+// está associado a no máximo um registro na primeira tabela. Nesse tipo de relação, ainda usamos chaves primárias e chaves estrangeiras para expressar a associação entre as tabelas. 
+// Por exemplo, considere uma tabela de "Departamentos" e uma tabela de "Funcionários". Cada departamento pode ter vários funcionários, mas cada funcionário está associado a apenas 
+// um departamento. Assim, temos uma relação 1 para any entre as tabelas.
+// A chave estrangera no caso sempre fica na tabela de muitos.
+
+// // Relação de tabela qualquer para qualquer (any para any):
+// // Uma relação de tabela qualquer para qualquer ocorre quando cada registro em uma tabela pode estar associado a um ou mais registros em outra tabela, e vice-versa. 
+// Nesse caso, são utilizadas tabelas intermediárias, também conhecidas como tabelas de junção ou tabelas associativas, para representar essa relação complexa. 
+// Essas tabelas intermediárias contêm chaves estrangeiras que se relacionam com as chaves primárias das tabelas envolvidas. Um exemplo comum dessa relação é uma tabela de "Alunos" 
+// e uma tabela de "Cursos", em que um aluno pode se inscrever em vários cursos e um curso pode ter vários alunos matriculados.
+
+// // Em resumo, as relações de tabela 1 para 1, 1 para any e any para any diferem na forma como os registros de uma tabela estão associados aos registros de outra tabela. 
+// A escolha do tipo de relação adequado depende das regras de negócio e dos requisitos específicos do sistema de banco de dados em questão.
