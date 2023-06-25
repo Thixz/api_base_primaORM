@@ -1,0 +1,24 @@
+Instalar a lib como dev dependencie vitest e se você colocou os re-maps para os paths em tsconfig.json paths também é necessário a lib vite-tsconfig-paths -d
+
+Se colocou os re-maps de paths também é necessário criar um arquivo vite.config.ts na raiz do projeto e adicionar
+
+import {defineConfig} from "vitest/config"
+import tsconfigPaths from "vite-tsconfig-paths"
+
+export default defineConfig({
+	plugins:[tsconfigPaths()]
+})
+
+
+Scripts em package.json
+    "test": "vitest run",  // Aqui ele roda apenas uma vez os testes
+    "test:watch": "vitest",  // Aqui ele roda os testes e fica "observando" por mudanças no código e caso ocorram ele testa novamente aumático!
+    "test:coverage": "vitest run --coverage"
+
+Adicionar lib @vitest/coverage-v8 -D
+
+
+Para entrarmos na UI do vitest é fácil
+
+Adicionar a lib @vitest/ui -D
+

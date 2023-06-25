@@ -6,6 +6,8 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:ui": "vitest run --ui",
+    "test:coverage": "vitest run --coverage",
     "dev": "tsx watch src/server.ts",
     "build": "tsup src --out-dir build",
     "start": "node build/server.js"
@@ -16,6 +18,7 @@
   "devDependencies": {
     "@types/bcryptjs": "2.4.2",
     "@types/node": "20.3.1",
+    "@vitest/coverage-v8": "0.32.2",
     "prisma": "4.16.1",
     "tsup": "7.0.0",
     "tsx": "3.12.7",
