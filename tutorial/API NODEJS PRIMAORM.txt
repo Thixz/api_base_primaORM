@@ -88,6 +88,14 @@ npx prisma studio para abrir interface de database
 
 
 
+FACTORY PATTERN PARA RESOLVER dependências
+
+É simplismente uma função centralizador de classes já com suas dependências resolvidas. Podemos entender em use-cases/factories. Isso, pois se eventualmente precisarmos
+adicionar ou remover dependências de nossos use cases não precisariamos ir em todas controllers para faze-lo, pois tudo estaria centralizado em um documento só que no caso
+são nossas factories
+
+
+
 
 
 
