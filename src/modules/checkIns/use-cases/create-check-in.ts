@@ -4,6 +4,7 @@ import { IUsersRepository } from "../../users/repositories/Iusers-repository";
 import { CheckIn, User } from "@prisma/client";
 import { ICheckInsRepository } from "../repositories/Icheck-ins-repository";
 import { IGymsRepository } from "../../gyms/repositories/Igyms-repository";
+import { getDistanceBetweenCoordinates } from "../../../helpers/get-distance-between-coordinates";
 
 interface CreateCheckInUseCaseRequest {
   user_id: string;
@@ -28,13 +29,25 @@ export class CreateCheckInUseCase {
     userLatitude,
     userLongitude,
   }: CreateCheckInUseCaseRequest): Promise<CreateCheckInUseCaseResponse> {
-    const gym = this.gymsRepository.findById(gym_id);
+    const gym = await this.gymsRepository.findById(gym_id);
 
     if (!gym) {
       throw new DefaultError("Gym not found.", 400);
     }
 
-    
+    const distance = getDistanceBetweenCoordinates(
+      { latitude: userLatitude, longitude: userLongitude },
+      { latitude: gym.latitude.toNumber(), longitude: gym.longitude.toNumber() }
+    );
+
+    const MAX_DISTANCE_IN_METER = 100;
+    if(distance > MAX_DISTANCE_IN_METER){
+      throw new DefaultError(
+        "You are trying to check in a Gym that has the distance bigger than permited.",
+        400
+      );
+    }
+
     const checkInOnSameDate = await this.checkInsRepository.findByUserIdOnDate(
       user_id,
       new Date()
