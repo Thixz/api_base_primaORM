@@ -4,7 +4,7 @@ import { IUsersRepository } from "../repositories/Iusers-repository";
 import { User } from "@prisma/client";
 
 interface GetUserProfileUseCaseRequest {
-  userId: string;
+  user_id: string;
 }
 
 interface GetUserProfileUseCaseResponse {
@@ -15,9 +15,9 @@ export class GetUserProfileUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
   async execute({
-    userId,
+    user_id,
   }: GetUserProfileUseCaseRequest): Promise<GetUserProfileUseCaseResponse> {
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new DefaultError("Resource not found.", 400);

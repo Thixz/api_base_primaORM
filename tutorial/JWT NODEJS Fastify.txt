@@ -1,0 +1,46 @@
+Em um projeto fastify para utilizarmos autorização jwt
+
+adicionar a lib npm i @fastify/jwt
+
+Em app.ts onde registramos os módulos devemos registrar o seguinte : 
+
+app.register(fastifyJwt,{
+  secret: env.JWT_SECRET    // Lembrar de definir a variável de ambiente em .env
+})
+
+Na nossa rota de autenticação (no caso controllers/users/authenticate) depois
+de checar se o usuário existe batendo e-mail e senha vamos gerar o token 
+
+  const token =  await reply.jwtSign({},{
+    sign: {
+      expiresIn: "1d",
+      sub: user.id
+    }
+  })
+
+e ai podemos retornar esse token para a requisição
+
+
+Pronto!
+
+Agora em todas as rotas que quiseremos garantir a autenticaçao do usuário basta chamar 
+
+  await request.jwtVerify();
+
+  console.log(request.user.sub)
+
+
+
+OBS : 
+
+Tipagem para sub dentro da propriedade user do request do fastify
+
+import "@fastify/jwt";
+
+declare module "@fastify/jwt" {
+  interface FastifyJWT {
+    user: {
+      sub: string;
+    };
+  }
+}

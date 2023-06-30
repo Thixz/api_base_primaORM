@@ -38,6 +38,10 @@ export class InMemoryCheckInsRepository implements ICheckInsRepository {
       .slice((page - 1) * 20, page * 20);
   }
 
+  async findById(checkIn_id: string) {
+    return this.checkIns.find((checkIn) => checkIn.id === checkIn_id) || null;
+  }
+
   async create(data: Prisma.CheckInUncheckedCreateInput) {
     const checkIn = {
       id: randomUUID(),
@@ -48,6 +52,18 @@ export class InMemoryCheckInsRepository implements ICheckInsRepository {
     };
 
     this.checkIns.push(checkIn);
+
+    return checkIn;
+  }
+
+  async save(checkIn: CheckIn) {
+    const checkInIndex = this.checkIns.findIndex(
+      (checkInItem) => checkInItem.id === checkIn.id
+    );
+
+    if (checkInIndex >= 0) {
+      this.checkIns[checkInIndex] = checkIn;
+    }
 
     return checkIn;
   }

@@ -4,11 +4,15 @@
   "description": "GymPass style app.",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "vitest run --dir src/modules/",
+    "test:create-prisma-environment": "npm link ./prisma/vitest-environment-prisma",
+    "test:install-prisma-environment": "npm link vitest-environment-prisma",
+    "pretest:e2e": "run-s test:create-prisma-environment test:install-prisma-environment",
+    "test:e2e": "vitest run --dir src/http",
+    "test:watch": "vitest --dir src/modules/",
     "test:ui": "vitest run --ui",
     "test:coverage": "vitest run --coverage",
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch --inspect src/server.ts",
     "build": "tsup src --out-dir build",
     "start": "node build/server.js"
   },
@@ -19,6 +23,7 @@
     "@types/bcryptjs": "2.4.2",
     "@types/node": "20.3.1",
     "@vitest/coverage-v8": "0.32.2",
+    "npm-run-all": "4.1.5",
     "prisma": "4.16.1",
     "tsup": "7.0.0",
     "tsx": "3.12.7",
@@ -26,6 +31,7 @@
     "vitest": "0.32.2"
   },
   "dependencies": {
+    "@fastify/jwt": "7.2.0",
     "@prisma/client": "4.16.1",
     "bcryptjs": "2.4.3",
     "dayjs": "1.11.8",

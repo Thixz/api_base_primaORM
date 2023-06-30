@@ -17,7 +17,14 @@ export async function authenticate(
 
   const authenticateUserUseCase = makeAuthenticateUseCase();
 
-  await authenticateUserUseCase.execute({ email, password });
+  const {user} = await authenticateUserUseCase.execute({ email, password });
 
-  return reply.status(200).send();
+  const token =  await reply.jwtSign({},{
+    sign: {
+      expiresIn: "1d",
+      sub: user.id
+    }
+  })
+
+  return reply.status(200).send({token});
 }

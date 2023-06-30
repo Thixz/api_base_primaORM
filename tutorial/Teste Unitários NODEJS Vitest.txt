@@ -22,3 +22,5 @@ Para entrarmos na UI do vitest é fácil
 
 Adicionar a lib @vitest/ui -D
 
+Exemplos de teste unitário em todos os use-cases do projeto
+

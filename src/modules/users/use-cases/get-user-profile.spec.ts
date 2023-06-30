@@ -23,7 +23,7 @@ describe("Get User profile Use Case", () => {
     });
 
     const { user } = await sut.execute({
-      userId: createdUser.id,
+      user_id: createdUser.id,
     });
 
     expect(user.id).toEqual(createdUser.id);
@@ -33,7 +33,7 @@ describe("Get User profile Use Case", () => {
   it("should not be able to get user profle with wrong id", async () => {
     expect(async () => {
       const { user } = await sut.execute({
-        userId: "non existing id",
+        user_id: "non existing id",
       });
     }).rejects.toBeInstanceOf(DefaultError);
   });
