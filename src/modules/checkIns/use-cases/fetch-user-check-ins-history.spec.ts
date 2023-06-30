@@ -1,6 +1,6 @@
 import { expect, describe, it, beforeEach } from "vitest";
 import { DefaultError } from "../../../helpers/DefaultError";
-import { InMemoryCheckInsRepository } from "../../checkIns/repositories/in-memory/in-memory-check-ins-repository";
+import { InMemoryCheckInsRepository } from "../repositories/in-memory/in-memory-check-ins-repository";
 import { FetchUserCheckInsUseCase } from "./fetch-user-check-ins-history";
 
 // Testes unitários nunca vai tocar em banco de dados. Eles são testes isolados. Aqui no caso dos use-cases
