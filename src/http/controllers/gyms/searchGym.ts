@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { makeCreateGymUseCase } from "../../../modules/gyms/use-cases/factories/make-create-gym-use-case";
 import { makeSearchGymsUseCase } from "../../../modules/gyms/use-cases/factories/make-search-gyms-use-case";
 
 export async function search(request: FastifyRequest, reply: FastifyReply) {

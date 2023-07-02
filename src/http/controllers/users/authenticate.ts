@@ -17,14 +17,34 @@ export async function authenticate(
 
   const authenticateUserUseCase = makeAuthenticateUseCase();
 
-  const {user} = await authenticateUserUseCase.execute({ email, password });
+  const { user } = await authenticateUserUseCase.execute({ email, password });
 
-  const token =  await reply.jwtSign({},{
-    sign: {
-      expiresIn: "1d",
-      sub: user.id
+  const token = await reply.jwtSign(
+    {},
+    {
+      sign: {
+        sub: user.id,
+      },
     }
-  })
+  );
 
-  return reply.status(200).send({token});
+  const refreshToken = await reply.jwtSign(
+    {},
+    {
+      sign: {
+        sub: user.id,
+        expiresIn: "7d",
+      },
+    }
+  );
+
+  return reply
+    .setCookie("refreshToken", refreshToken, {
+      path: "/",
+      secure: true,
+      sameSite: true,
+      httpOnly: true,
+    })
+    .status(200)
+    .send({ token });
 }

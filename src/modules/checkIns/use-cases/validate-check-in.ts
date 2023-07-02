@@ -1,10 +1,6 @@
-import { compare } from "bcryptjs";
 import { DefaultError } from "../../../helpers/DefaultError";
-import { IUsersRepository } from "../../users/repositories/Iusers-repository";
-import { CheckIn, User } from "@prisma/client";
+import { CheckIn } from "@prisma/client";
 import { ICheckInsRepository } from "../repositories/Icheck-ins-repository";
-import { IGymsRepository } from "../../gyms/repositories/Igyms-repository";
-import { getDistanceBetweenCoordinates } from "../../../helpers/get-distance-between-coordinates";
 import dayjs from "dayjs";
 
 interface ValidateCheckInUseCaseRequest {
@@ -16,12 +12,10 @@ interface ValidateCheckInUseCaseResponse {
 }
 
 export class ValidateCheckInUseCase {
-  constructor(
-    private checkInsRepository: ICheckInsRepository
-  ) {}
+  constructor(private checkInsRepository: ICheckInsRepository) {}
 
   async execute({
-    checkIn_id
+    checkIn_id,
   }: ValidateCheckInUseCaseRequest): Promise<ValidateCheckInUseCaseResponse> {
     const checkIn = await this.checkInsRepository.findById(checkIn_id);
 
