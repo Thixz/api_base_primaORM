@@ -1,0 +1,139 @@
+(Testes e2e por serem pesados só vão rodar no momento que nossa aplicação for subir e não normalmente)
+
+
+Instalar a biblioteca vitest (que é melhor que o jest) como -D
+
+Não esquecer que se importar o app para fazer chamadas http ele vai iniciar um servidor na porta designada caso o listen esteja em server.ts
+
+Instalar lib supertest como -D para poder realizar os testes sem colocar a aplicação no ar e @types/supertest
+
+Não esquecer que as migrations precisam ser executadas no banco de teste
+
+
+
+
+
+
+Parar fazer os testes E2E em nossa aplicação devemos ter um ambiente com banco de dados
+separado do que estamos trabalhando em nossa aplicação em desenvolvimento. Um database
+apenas para os testes.
+
+Para isso, podemos criar um ambiente personalizado nosso e é o que vamos fazer.
+
+
+
+
+
+Dentro da pasta prisma 
+ - Criar uma pasta vitest-environment-prisma e dentro dessa pasta criada rodar npm init -y
+   para que seja criado um package.json dentro desta pasta
+
+{
+  "name": "vitest-environment-prisma",
+  "version": "1.0.0",
+  "description": "",
+  "main": "prisma-test-environment.ts",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+
+
+
+
+
+
+   
+ Criar também um arquivo prisma-test-environment.ts dentro desta pasta
+
+import "dotenv/config";
+import { Environment } from "vitest";
+import { randomUUID } from "crypto";
+import { execSync } from "child_process";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient()
+
+function generateDatabaseURL(schema: string) {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL not found");
+  }
+
+  const url = new URL(process.env.DATABASE_URL);
+
+  url.searchParams.set("schema", schema);
+
+  return url.toString();
+}
+
+export default <Environment>{
+  name: "prisma",
+
+  async setup() {
+    // O que vai ser executado antes de cada ARQUIVO teste
+    const schema = randomUUID();
+    process.env.DATABASE_URL = generateDatabaseURL(schema);
+
+    execSync(`npx prisma migrate deploy`) // Aqui é executado migrate deploy e não migrate dev porque o migrate dev verificar todas migrations antes de cria-las, e aqui no caso queremos simplismente criar as migratios para cada novo schema de database
+
+    return {
+      async teardown() {
+        // O que vai ser executado depois de cada ARQUIVO de teste
+        await prisma.$executeRawUnsafe( `DROP SCHEMA IF EXISTS "${schema}" CASCADE`)
+      }, 
+    };
+  },
+};
+
+
+
+
+
+
+
+ Criar um arquivo vite.config.ts na raiz do projeto 
+
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+    test: {
+        environmentMatchGlobs:[
+            ["src/http/controllers/**","prisma"] // Aqui estamos definindo que todos os testes executados dentro de controllers devem ser executados com o ambiente prisma que finimos em vitest-environment-prisma
+        ]
+    }
+})
+
+
+
+
+
+
+Agora dentro da pasta vitest-environment-prisma rodar o comando npm link 
+ que cria localmente o pacote que criamos dentro dessa pasta para podermos instalar 
+em nosso projeto.
+
+Agora dentro da pasta raiz de nosso projeto executar o comando npm link vitest-environment-prisma
+que instala o pacote que linkamos acima.
+
+Pronto! Agora nosso ambiente de teste está configurado.
+
+Em scripts vamos separar os scripts de testes unitários e e2e
+    "test": "vitest run --dir src/modules/",
+    "test:e2e": "vitest run --dir src/http",
+    "test:watch": "vitest --dir src/modules/",
+
+
+Também agora para evitar que em outras máquinas tenha que fazer todos aquele processo de npm link
+que fizemos acima, iremos deixar esse processo automatizado.
+
+Primeiro iremos instalar a lib npm-run-all -D que permite que usuários windows executem
+ comandos npm em ordem sequencial (pois um comando DEVE ser executado ANTES do outro)
+
+    "test:create-prisma-environment": "npm link ./prisma/vitest-environment-prisma",
+    "test:install-prisma-environment": "npm link vitest-environment-prisma",
+    "pretest:e2e": "run-s test:create-prisma-environment test:install-prisma-environment",
+    "test:e2e": "vitest run --dir src/http",
+    "test:e2e:watch": "vitest --dir src/http",
+
+Pronto, agora sempre que rodarmos o comando test:e2e os comandos de link serão executados antes
+ para garantir o sucesso do ambient.

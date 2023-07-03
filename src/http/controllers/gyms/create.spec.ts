@@ -1,6 +1,6 @@
 import request from "supertest";
 import { app } from "../../../app";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it  } from "vitest";
 import { createAndAuthenticateUser } from "../../../helpers/test/create-and-authenticate-user";
 
 describe("Create Gym (e2d)", () => {
@@ -13,7 +13,9 @@ describe("Create Gym (e2d)", () => {
   });
 
   it("Should be able to create a Gym", async () => {
-    const { token } = await createAndAuthenticateUser(app);
+    const { token } = await createAndAuthenticateUser(app,true);
+
+    console.log(token)
 
     const gymResponse = await request(app.server)
       .post("/gyms")
@@ -27,5 +29,5 @@ describe("Create Gym (e2d)", () => {
       });
 
     expect(gymResponse.statusCode).toEqual(201);
-  });
-});
+  })
+})

@@ -1,0 +1,12 @@
+CI - Continuous Integration 
+  Estratégias e workflows continuos para integração continua de código
+  Fluxos que executam e validam se esses novos códigos que estão chegando estão válidos e de acordo com o esperado.
+  Exemplo : Receber novos códigos no github e checar se os mesmos estão válidos (Github Actions)
+
+  Exemplo em run-unit-tests.yml
+  
+
+
+CD - Continuous Delivery/Deployment
+  É o processo de que quando o código for válido e estiver de acordo com o esperado, ele será entregue para o cliente. Será feito deploy no caso.
+

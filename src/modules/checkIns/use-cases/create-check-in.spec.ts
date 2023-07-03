@@ -106,4 +106,15 @@ describe("Create Check In Use Case", () => {
       });
     }).rejects.toBeInstanceOf(DefaultError);
   });
+
+  it("should not be able to create a check-in in a gym that doesn't exists", async () => {
+    expect(async () => {
+      await sut.execute({
+        gym_id: "gym-02",
+        user_id: "user-01",
+        userLatitude: -23.5507307,
+        userLongitude: -46.5501599,
+      });
+    }).rejects.toBeInstanceOf(DefaultError);
+  });
 });

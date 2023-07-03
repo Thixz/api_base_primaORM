@@ -1,11 +1,13 @@
 import { hash } from "bcryptjs";
 import { IUsersRepository } from "../repositories/Iusers-repository";
 import { DefaultError } from "../../../helpers/DefaultError";
+import { Role } from "@prisma/client";
 
 interface CreateUserUseCaseParams {
   name: string;
   email: string;
   password: string;
+  role: Role
 }
 
 // SOLID
@@ -20,6 +22,7 @@ export class CreateUserUseCase {
     name,
     email,
     password,
+    role
   }: CreateUserUseCaseParams) {
     const password_hash = await hash(password, 6); // 6 é o numero de rounds que aquela senha vai ser encriptada. Quanto mais rounds mais seguro, porém mais pesado para a app.
 
@@ -36,6 +39,7 @@ export class CreateUserUseCase {
       name,
       email,
       password_hash,
+      role
     });
 
     return { createdUser };
