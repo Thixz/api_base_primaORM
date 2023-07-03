@@ -1,0 +1,6 @@
+Adicionar lib tsup -D
+
+Script em package.json
+"build" : "tsup src --out-dir build"   
+
+Testar se funcionou com node build/server.js
