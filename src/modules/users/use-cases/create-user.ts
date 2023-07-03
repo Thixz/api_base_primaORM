@@ -1,12 +1,13 @@
 import { hash } from "bcryptjs";
-import { prisma } from "../lib/prisma";
-import { IUsersRepository } from "../repositories/prisma/Iusers-repository";
-import { DefaultError } from "../helpers/DefaultError";
+import { IUsersRepository } from "../repositories/Iusers-repository";
+import { DefaultError } from "../../../helpers/DefaultError";
+import { Role } from "@prisma/client";
 
-interface RegisterServiceParams {
+interface CreateUserUseCaseParams {
   name: string;
   email: string;
   password: string;
+  role: Role
 }
 
 // SOLID
@@ -14,10 +15,15 @@ interface RegisterServiceParams {
 // que a service estaria diretamente ligada ao repositório e se caso amanhã quisessmos mudar o método comunicação com o database teriamos que alterar todas as services?
 // por este motivo não instanciamos o repositótirio diretamenta na service, mas sim recebemos essa depência como parâmetro.
 
-export class RegisterUserService {
+export class CreateUserUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
-  async execute({ name, email, password }: RegisterServiceParams) {
+  async execute({
+    name,
+    email,
+    password,
+    role
+  }: CreateUserUseCaseParams) {
     const password_hash = await hash(password, 6); // 6 é o numero de rounds que aquela senha vai ser encriptada. Quanto mais rounds mais seguro, porém mais pesado para a app.
 
     const user = await this.usersRepository.findByEmail(email);
@@ -29,6 +35,13 @@ export class RegisterUserService {
       );
     }
 
-    await this.usersRepository.create({ name, email, password_hash });
+    const createdUser = await this.usersRepository.create({
+      name,
+      email,
+      password_hash,
+      role
+    });
+
+    return { createdUser };
   }
 }

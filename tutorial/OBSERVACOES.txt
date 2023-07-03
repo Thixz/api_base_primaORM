@@ -1,0 +1,16 @@
+Na validação do Zod devemos nos atentar para as propriedades que são nullable ou possiveis undefined, pois são coisas diferentes.
+ Se o usuário não enviar na request a propriedade então ela será undefined, mas se o usuário enviar a propriedade com o valor null então ela será null.
+ No zod caso a gente queira validar o null como válido devemos passar o método nullable() para a propriedade, caso queiramos validar o undefined como válido devemos 
+ passar o método optional() para a propriedade.
+
+
+
+ Atentar nos testes e2e que os parâmetros que são enviados para o body são enviados dentro do método send e os parâmetros recebidos pela query são enviados dentro do método query.
+   e depois chamado o método .send()
+
+   Lembrando que os parâmetros que chegam via query são sempre string
+
+
+   Caso não tenhamos alguma rota para criar uma academia por exemplo antes de criar um checkin não obrigatoriamente precisamos criar uma rota para criar uma academia,
+   mas podemos simplimente chamar o Prisma que é quem trabalha no repositório e criar manualmente, porém futuramente se adicionarmos algum novo campos iremos precisar ir em 
+   todos os testes e alterar, por isso não é o ideal.

@@ -27,7 +27,7 @@ app.listen({ host: "0.0.0.0", port: 3333 }).then(() => {
 
 Criar .gitignore com node_modules e build
 
-scripts "dev": "tsx watch src/server.ts"   "build": "tsup src --out-dir build"  "start": "node build/server.js"
+scripts "dev": "tsx watch --inspect src/server.ts"   "build": "tsup src --out-dir build"  "start": "node build/server.js"
 
 Adicionar o arquivo .npmrc com o texto save-exact=true
 Essa configuração vai sempre que uma lib for instalada colocar a versão exata no package.json e nao > ou ~ ^
@@ -85,6 +85,14 @@ npx prisma generate  gera o client do prisma com tudo o que definimos em schema.
 npx prisma migrate dev para rodar as migrations
 
 npx prisma studio para abrir interface de database
+
+
+
+FACTORY PATTERN PARA RESOLVER dependências
+
+É simplismente uma função centralizador de classes já com suas dependências resolvidas. Podemos entender em use-cases/factories. Isso, pois se eventualmente precisarmos
+adicionar ou remover dependências de nossos use cases não precisariamos ir em todas controllers para faze-lo, pois tudo estaria centralizado em um documento só que no caso
+são nossas factories
 
 
 

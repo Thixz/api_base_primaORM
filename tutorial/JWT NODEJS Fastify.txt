@@ -1,0 +1,96 @@
+Em um projeto fastify para utilizarmos autorização jwt
+
+adicionar a lib npm i @fastify/jwt
+
+Em app.ts onde registramos os módulos devemos registrar o seguinte : 
+
+app.register(fastifyJwt, {
+  secret: env.JWT_SECRET,
+  cookie: {
+   cookieName: "refreshToken",
+   signed:false
+  },
+  sign: {
+    expiresIn: "10m",
+  }
+});
+
+Na nossa rota de autenticação (no caso controllers/users/authenticate) depois
+de checar se o usuário existe batendo e-mail e senha vamos gerar o token 
+
+  const token =  await reply.jwtSign({},{
+    sign: {
+      sub: user.id
+    }
+  })
+
+e ai podemos retornar esse token para a requisição
+
+
+Pronto!
+
+Agora em todas as rotas que quiseremos garantir a autenticaçao do usuário basta chamar 
+
+  await request.jwtVerify();
+
+  console.log(request.user.sub)
+
+
+
+OBS : 
+
+Tipagem para sub dentro da propriedade user do request do fastify
+
+import "@fastify/jwt";
+
+declare module "@fastify/jwt" {
+  interface FastifyJWT {
+    user: {
+      sub: string;
+    };
+  }
+}
+
+
+
+
+REFRESH TOKEN
+
+O refresh token é uma estratégia utilizada para que o usuário não precise ficar logando toda vez que o token expirar. Assim, podemos na criação do token jwt definir um tempo de expiração curto e quando o token expirar o usuário pode utilizar o refresh token para gerar um novo token jwt.
+ Esse refresh token vai ser setado na response da validação como cookie, para que o front não tenha acesso a ele, e o front vai ter que enviar esse cookie na requisição para que o back possa gerar um novo token jwt.
+
+ Para trabalharmos com cookia instalar primeiro a lib @fastify/cookie
+
+app.ts
+ app.register(fastifyCookie)
+
+
+
+ Na rota de authenticate
+   const refreshToken = await reply.jwtSign(
+    {},
+    {
+      sign: {
+        sub: user.id,
+        expiresIn: "7d",	
+      },
+    }
+  );
+
+  return reply
+    .setCookie("refreshToken", refreshToken, {
+      path: "/",
+      secure: true,
+      sameSite: true,
+      httpOnly: true,
+    })
+    .status(200)
+    .send({ token });
+
+
+
+    Criar nova rota para refresh token
+
+    
+
+
