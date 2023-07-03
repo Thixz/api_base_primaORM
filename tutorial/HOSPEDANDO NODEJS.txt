@@ -1,0 +1,29 @@
+No servidor Render criar um novo PostegresDB
+
+Criar nova variável de ambiente no projeto DATABASE_CLIENT
+
+Adicionar a lib pg ao projeto
+
+Agora na conexão do knex a connection vai ser dinâmica de acordo com o database_client fornecido
+
+Em package json criar uma nova propriedade dentro do objeto "engines": { "node":">= 18"  } para definir que estamos usando o node 18 ou maior no nosso projeto (isso hoje 22.06.2023)
+
+Comitar tudo novo
+
+Voltar ao site do render em Dashboard clickar em new web service e na conta do github conectar com o repositório que será hospedado
+
+Na opção build command iremos colocar todo o comando para buildar a aplicação para javascript
+Aqui vamos primeiro de tudo instalar todas nossas dependências do projeto, rodar nossas migrations e então rodar o comando de build
+  npm install && npm run knex migrate:latest && npm run build      O && aqui serve para que um comando rode SOMENTE após o outro
+
+Em start command iremos dar o comando para de fato rodar nossa aplicação node. Sempre é o server que começa nossa aplicação (como seria a classe program no c#)
+e como no comando npm run build é criada uma pasta build com todo nossa código nós direcionamos o comando node para build/server.js
+
+node build/server.js
+
+
+Em advanced podemos adicionar novas variáveis de ambiente
+DATABASE_CLIENT pg
+DATABASE_URL Internal Database URL do nosso banco que criamos lá em cima
+
+Auto-Deploy (cada vez que um novo deploy surgir no github será atualizado o projeto)
